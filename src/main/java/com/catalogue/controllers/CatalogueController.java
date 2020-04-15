@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import com.catalogue.models.Film;
 import com.catalogue.models.ItemContainer;
 import com.catalogue.models.TitleAndGenre;
+import com.catalogue.models.TitleAndGenreComparator;
 import com.catalogue.models.TitleAndYear;
 import com.catalogue.models.TitleAndYearComparator;
 import com.catalogue.models.TvSeries;
@@ -37,9 +38,13 @@ public class CatalogueController {
 	private ItemContainer model;
 	private CatalogueView view;
 	private String profileName;
+	//Contains all the preffered films
 	private Map<String, Film> filmMap=new HashMap<String, Film>();
+	//Contains all the preffered tvSeries
 	private Map<String, TvSeries> tvSeriesMap= new HashMap<String, TvSeries>();
+	//Contains the year as key sorted in reverse order, and List of TitleAndGenre as List and this is used as model in listByYearView
 	private Map<Integer, List<TitleAndGenre>> listByYear= new TreeMap<Integer, List<TitleAndGenre>>(Collections.reverseOrder()); 
+	//Contains the genre as key sorted in asc order, and TitleAndYear as List and this is used as model in listByGenreView
 	private Map<String, List<TitleAndYear>> listByGenre= new TreeMap<String, List<TitleAndYear>>(); 
 
 	public CatalogueController(ItemContainer model,CatalogueView view, String profileName){
@@ -48,7 +53,10 @@ public class CatalogueController {
 		this.profileName=profileName;
 		initView();
 	}
+	
+	/*Initialize Events Handling as Per View*/
 	public void InitController() {
+		/*Title Mapping to ItemDetailsView on MouseClick Event*/
 		for(JLabel label:view.getVideoLbl()) {
 			label.addMouseListener(new MouseAdapter()  
 			{  
@@ -73,6 +81,8 @@ public class CatalogueController {
 				}  
 			}); 
 		}
+
+		/*Mapping to SwitchProfileView on MouseClick Event*/
 		view.getSwitchProfileBtn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				view.getFrame().dispose();
@@ -81,6 +91,7 @@ public class CatalogueController {
 				switchProfileController.InitController();
 			}
 		});
+		/*Mapping to AddNewItemView on MouseClick Event*/
 		view.getAddNewBtn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				view.getFrame().dispose();
@@ -90,6 +101,7 @@ public class CatalogueController {
 
 			}
 		});
+		/*Mapping to ListByGenreView on MouseClick Event*/
 		view.getListByGenreButton().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				view.getFrame().dispose();
@@ -98,6 +110,7 @@ public class CatalogueController {
 				listByGenreController.initController();
 			}
 		});
+		/*Mapping to ListByYearView on MouseClick Event*/
 		view.getListByYearBtn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				view.getFrame().dispose();
@@ -107,7 +120,10 @@ public class CatalogueController {
 			}
 		});
 	}
+	/*Initialize the View As Per Data*/
 	public void initView() {
+		
+		/*Checks whether profile exists in ItemContainer*/
 		if(model.getProfileMap().containsKey(this.profileName)) {
 			view.getLblProfileValue().setText(profileName);
 		}
@@ -115,6 +131,7 @@ public class CatalogueController {
 			System.exit(0);
 		}
 
+		/*Setting the Title Label Blue Underlined*/
 		for(JLabel label:view.getVideoLbl()) {
 			Font font = label.getFont();
 			Map<TextAttribute, Object> attributes = new HashMap<>(font.getAttributes());
@@ -124,6 +141,11 @@ public class CatalogueController {
 			label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		}
 
+		/*Setting the prefferedFilms and TvSeries According to Profile Preffered Genre*/
+		/*
+		 * Also, listByView model and listByGenreModel are set here
+		 */
+		//Rows is set to 0, as there are max 5 rows, so on getting 5 films or tv series, the list will be completed
 		int rows=0;
 		List<Film> prefferedFilms= new ArrayList<Film>();
 		List<TvSeries> prefferedTvSeries= new ArrayList<TvSeries>();
@@ -137,7 +159,7 @@ public class CatalogueController {
 				rows++;
 			}
 		}
-		
+
 		if(rows<5) {
 			for(TvSeries tvSeries:model.getTvseries()) {
 				if(rows>=5) {
@@ -152,6 +174,7 @@ public class CatalogueController {
 		rows=0;
 		
 		String genreList="";
+		/*Getting prefferedFilms from the model*/
 		for(Film film:prefferedFilms) {
 			this.filmMap.put(film.getTitle(), film);
 			view.getVideoLbl()[rows].setText(film.getTitle());
@@ -163,7 +186,7 @@ public class CatalogueController {
 			genreList+=genre;
 			view.getGenreLabel()[rows].setText(genre);
 			rows++;
-			
+
 			if(listByYear.containsKey(film.getYear())) {
 				List<TitleAndGenre> objList=listByYear.get(film.getYear());
 				objList.add(new TitleAndGenre(film.getTitle(), genre));
@@ -174,6 +197,8 @@ public class CatalogueController {
 				listByYear.put(film.getYear(), objList);
 			}
 		}
+
+		/*Getting prefferedtvSeries from the model*/
 		for(TvSeries tvSeries:prefferedTvSeries) {
 			this.tvSeriesMap.put(tvSeries.getTitle(), tvSeries);
 			view.getVideoLbl()[rows].setText(tvSeries.getTitle());
@@ -195,11 +220,15 @@ public class CatalogueController {
 				listByYear.put(tvSeries.getYear(), objList);
 			}
 		}
-		List<String> prefferedGenre=Arrays.asList(genreList.split("\\|"));
-		prefferedGenre=prefferedGenre.stream().distinct().collect(Collectors.toList());
 		
+		/*List Contains all the genre from the main catalogue Screen*/
+		List<String> prefferedGenre=Arrays.asList(genreList.split("\\|"));
+		/*Getting the distinct genre from the list, as two videos can be of one Genre*/
+		prefferedGenre=prefferedGenre.stream().distinct().collect(Collectors.toList());
+
+		/*Mapping the list of videos to Genre, by iterating all prefferedMovies and prefferedTvSeries*/
 		for(String pG: prefferedGenre) {
-			
+
 			for(Film film:prefferedFilms) {
 				for(Integer genreId:film.getGenre()) {
 					if(pG.equalsIgnoreCase(model.getGenreMap().get(genreId).getGenre())) {
@@ -216,7 +245,7 @@ public class CatalogueController {
 					}
 				}
 			}
-			
+
 			for(TvSeries tvSeries:prefferedTvSeries) {
 				for(Integer genreId:tvSeries.getGenre()) {
 					if(pG.equalsIgnoreCase(model.getGenreMap().get(genreId).getGenre())) {
@@ -234,6 +263,13 @@ public class CatalogueController {
 				}
 			}
 		}
+		
+		//Sorting the list of TitleAndGenre by Title, which are mapped to year//
+		for(Integer key:listByYear.keySet()) {
+			List<TitleAndGenre> objList=listByYear.get(key);
+			Collections.sort(objList, new TitleAndGenreComparator());               
+		}
+		//Sorting the list of TitleAndYear by Title, which are mapped to genre//
 		for(String key:listByGenre.keySet()) {
 			List<TitleAndYear> objList=listByGenre.get(key);
 			Collections.sort(objList, new TitleAndYearComparator());

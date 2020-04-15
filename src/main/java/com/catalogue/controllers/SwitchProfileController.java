@@ -19,6 +19,7 @@ public class SwitchProfileController {
 		initView();
 	}
 	public void initView() {
+		/*Shows all profiles in ItemContainer as Buttons*/
 		int rows=0;
 		for(Profile profile:model.getProfiles()) {
 			view.getButton()[rows].setLabel(profile.getName());
@@ -26,6 +27,7 @@ public class SwitchProfileController {
 		}
 	}
 	public void InitController() {
+		/*Adding Mapping to Main Screen onClick Event*/
 		for(Button button: view.getButton()) {
 			button.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { 
 				view.getFrame().dispose();

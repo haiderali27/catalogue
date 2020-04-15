@@ -40,6 +40,7 @@ public class ListByGenreController {
 		initView();
 
 	}
+	/*Initialize the View As Per Data*/
 	public void initView() {
 		int i=0;
 		int j=0;
@@ -78,6 +79,7 @@ public class ListByGenreController {
 		}
 	}
 	public void initController() {
+		/*Title Mapping to ItemDetailsView on MouseClick Event*/
 		for(JLabel label:view.getLblTitle()) {
 			label.addMouseListener(new MouseAdapter()  
 			{  

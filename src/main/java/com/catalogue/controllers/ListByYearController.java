@@ -7,17 +7,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JLabel;
-
 import com.catalogue.models.Film;
 import com.catalogue.models.ItemContainer;
 import com.catalogue.models.TitleAndGenre;
-import com.catalogue.models.TitleAndGenreComparator;
 import com.catalogue.models.TvSeries;
 import com.catalogue.views.ItemDetailsView;
 import com.catalogue.views.ListByYearView;
@@ -42,12 +38,8 @@ public class ListByYearController {
 		initView();
 
 	}
+	/*Initialize the View As Per Data*/
 	public void initView() {
-		for(Integer key:model.keySet()) {
-			List<TitleAndGenre> objList=model.get(key);
-			Collections.sort(objList, new TitleAndGenreComparator());               
-		}
-	
 		int i=0;
 		int j=0;
 		int loc=30;
@@ -85,6 +77,7 @@ public class ListByYearController {
 		}
 	}
 	public void initController() {
+		/*Title Mapping to ItemDetailsView on MouseClick Event*/
 		for(JLabel label:view.getLblTitle()) {
 			label.addMouseListener(new MouseAdapter()  
 			{  

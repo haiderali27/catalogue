@@ -36,8 +36,11 @@ public class AddNewItemController {
 	private ItemContainer model;
 	private AddNewItemView view;
 	private String profileName;
+	//Stores the genreIds of Genre entered in TextBox
 	private List<Integer> genre=new ArrayList<Integer>();
+	//Stores the castIds of Cast entered in TextBox
 	private List<Integer> cast=new ArrayList<Integer>();
+	//Stores the directorId or CreatorId of Film or TvSeries entered in TextBox
 	private Integer director=0;
 	public AddNewItemController(ItemContainer m, AddNewItemView v, String profileName) {
 		this.model = m;
@@ -48,6 +51,7 @@ public class AddNewItemController {
 	public void initView() {
 
 	}
+	/*Validates if Director Exist in ItemContainer*/
 	public int directorValidation(String director) {
 		if(director.isEmpty()) {
 			return 1;
@@ -67,7 +71,7 @@ public class AddNewItemController {
 		}
 		return 0;
 	}
-
+	/*Validates if Cast members Exist in ItemContainer*/
 	public int castValidation(String cast) {
 		if(cast.isEmpty()) {
 			return 1;
@@ -92,7 +96,7 @@ public class AddNewItemController {
 
 		return 0;
 	}
-
+	/*Validates if Genre Exist in ItemContainer*/
 	public int genreValidation(String genre) {
 		if(genre.isEmpty()) {
 			return 1;
@@ -118,6 +122,7 @@ public class AddNewItemController {
 
 		return 0;
 	}
+	/*Validates if year is 4 digit Number*/
 	public boolean yearValidation(String year) {
 		if(year.length()!=4) {
 			return false;
@@ -129,6 +134,9 @@ public class AddNewItemController {
 		return true;
 	}
 	public void InitController() {
+		/*
+		 * Sets, whether the lblDirect should have director as text or creator as text
+		 */
 		view.getChckbxTvSeries().addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				if(view.getChckbxTvSeries().isSelected()) {	
@@ -139,10 +147,16 @@ public class AddNewItemController {
 			}
 		});
 
-
+		/*
+		 * Only Numbers are allowed to enter in txtYear textbox
+		 */
 		JFormattedTextField txt = ((JSpinner.NumberEditor) view.getTxtYear().getEditor()).getTextField();
 		((NumberFormatter) txt.getFormatter()).setAllowsInvalid(false);
 
+		/*
+		 * Save Button Event Handling, Also, on saving all validations are checked at first, if validations are clear
+		 * then it updates the itemContains as well as data.json
+		 */
 		view.getBtnSave().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int genreValidationResult=genreValidation(view.getTxtGenre().getText());
@@ -193,8 +207,11 @@ public class AddNewItemController {
 				}
 				ObjectMapper objectMapper=  new ObjectMapper();
 				try {
-
+					
 					view.getFrame().dispose();
+					/*
+					 *Saves the data to data.json 
+					 */
 					objectMapper.writeValue(new OutputStreamWriter(new FileOutputStream(new File(System.getProperty("user.dir")+"\\"+"data.json")), "UTF-8")
 							,model);
 					CatalogueView view= new CatalogueView("Video Catalogue");

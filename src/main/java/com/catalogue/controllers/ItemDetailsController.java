@@ -24,6 +24,7 @@ public class ItemDetailsController {
 		this.ic=ic;
 		initView();
 	}
+	/*Initialize the View As Per Data*/
 	public void initView() {
 		if(model instanceof Film) {
 		
@@ -88,6 +89,7 @@ public class ItemDetailsController {
 
 	}
 	public void InitController() {
+		/*Back Button Mapping to Main Screen on Click event*/
 		view.getBtnBack().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				view.getFrame().dispose();
