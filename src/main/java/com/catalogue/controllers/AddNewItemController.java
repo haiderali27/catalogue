@@ -73,6 +73,7 @@ public class AddNewItemController {
 	}
 	/*Validates if Cast members Exist in ItemContainer*/
 	public int castValidation(String cast) {
+		this.cast=new ArrayList<Integer>();
 		if(cast.isEmpty()) {
 			return 1;
 		}
@@ -98,6 +99,7 @@ public class AddNewItemController {
 	}
 	/*Validates if Genre Exist in ItemContainer*/
 	public int genreValidation(String genre) {
+		this.genre=new ArrayList<Integer>();
 		if(genre.isEmpty()) {
 			return 1;
 		}

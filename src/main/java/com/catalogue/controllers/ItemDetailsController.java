@@ -49,7 +49,7 @@ public class ItemDetailsController {
 			
 			view.getTxtDirector().setText(director);
 			String people="";
-			for(Integer peopleId:((Film) model).getGenre()) {
+			for(Integer peopleId:((Film) model).getCast()) {
 				people+=((ItemContainer) ic).getPeopleMap().get(peopleId).getName()+ "\n";
 			}
 			
@@ -78,7 +78,7 @@ public class ItemDetailsController {
 			
 			view.getTxtDirector().setText(director);
 			String people="";
-			for(Integer peopleId:((TvSeries) model).getGenre()) {
+			for(Integer peopleId:((TvSeries) model).getCast()) {
 				people+=((ItemContainer) ic).getPeopleMap().get(peopleId).getName()+ "\n";
 			}
 			
